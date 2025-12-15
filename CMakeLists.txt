@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.30)
+
+project(ChadEngine)
+
+set(CMAKE_C_STANDARD 17) 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(BUILD_UTILS OFF CACHE BOOL "utilities" FORCE)
+
+# set(GLFW_BUILD_WAYLAND ON)
+# set(GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only")
+# set(GLFW_INSTALL OFF CACHE BOOL "GLFW lib only")
+
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
+
+add_subdirectory(vendor/glfw 
+	"${CMAKE_CURRENT_BINARY_DIR}/glfw_build")
+add_subdirectory(vendor/glew/build/cmake
+	"${CMAKE_CURRENT_BINARY_DIR}/glew_build")
+
+include_directories(source)
+include_directories(vendor/glfw/include) 
+include_directories(vendor/glew/include)
+
+set_property(TARGET glew_s PROPERTY FOLDER GLEW)
+set_property(TARGET glew   PROPERTY FOLDER GLEW)
+
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+target_link_libraries(${PROJECT_NAME}
+	glfw
+	glew_s
+)
+
+
+
+
+
