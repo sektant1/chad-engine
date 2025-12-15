@@ -53,4 +53,5 @@ dkms.conf
 
 .cache
 build
+bin
 vcpkg_installed

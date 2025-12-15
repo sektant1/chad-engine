@@ -1,1 +1,0 @@
-/usr/bin/cc -fPIC -O3 -DNDEBUG -shared -Wl,--dependency-file=CMakeFiles/glew.dir/link.d -Wl,-soname,libGLEW.so.2.2 -o ../lib/libGLEW.so.2.2.0 CMakeFiles/glew.dir/__/__/src/glew.c.o  /usr/lib/libGL.so /usr/lib/libGLU.so /usr/lib/libSM.so /usr/lib/libICE.so /usr/lib/libX11.so /usr/lib/libXext.so

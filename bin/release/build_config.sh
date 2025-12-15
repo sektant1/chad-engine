@@ -1,1 +1,0 @@
-export PROJECT_EXECUTABLE_NAME="ChadEngine"
