@@ -31,8 +31,8 @@ source "$BUILD_DIR/build_config.sh"
 EXECUTABLE="$BUILD_DIR/$PROJECT_EXECUTABLE_NAME"
 
 if [ ! -f "$EXECUTABLE" ]; then
-    echo "Erro: O executável '$PROJECT_EXECUTABLE_NAME' não foi encontrado em $BUILD_DIR."
-    echo "Verifique se a variável PROJECT_NAME no script bate com o add_executable no CMakeLists.txt"
+    echo "Error: The executable '$PROJECT_EXECUTABLE_NAME' was not found in $BUILD_DIR."
+    echo "Check if the PROJECT_NAME at the script matches with the one at add_executable in CMakeLists.txt"
     exit 1
 fi
 
