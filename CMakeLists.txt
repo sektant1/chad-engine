@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30)
 
-project(ChadEngine)
+project(ChadEngine VERSION 1.0)
 
 set(CMAKE_C_STANDARD 17) 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -32,7 +32,11 @@ target_link_libraries(${PROJECT_NAME}
 	glew_s
 )
 
-
+configure_file(
+    "scripts/build_config.sh"   
+    "${CMAKE_BINARY_DIR}/build_config.sh"  
+    @ONLY
+)
 
 
 

@@ -1,0 +1,1 @@
+/usr/bin/c++ -g -Wl,--dependency-file=CMakeFiles/ChadEngine.dir/link.d CMakeFiles/ChadEngine.dir/src/main.cpp.o -o ChadEngine  glfw_build/src/libglfw3.a lib/libGLEWd.a /usr/lib/librt.a -lm -ldl /usr/lib/libGL.so /usr/lib/libGLU.so /usr/lib/libSM.so /usr/lib/libICE.so /usr/lib/libX11.so /usr/lib/libXext.so

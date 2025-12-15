@@ -33,6 +33,7 @@ auto main() -> int
         return -1;
     }
 
+    // vertex shader code / runs once per triangle vertex
     std::string vertexShaderSource = R"(
 		#version 330 core
 		layout (location = 0) in vec3 position;
@@ -61,6 +62,7 @@ auto main() -> int
         std::cerr << "ERROR:VERTEX_SHADER_COMPILATION_FAILED: " << infoLog << "\n";
     }
 
+    // fragment shader code / runs once per pixel in triangle vertex
     std::string fragmentShaderSource = R"(
 		#version 330 core
 		out vec4 FragColor;
@@ -102,26 +104,44 @@ auto main() -> int
 
     // clang-format off
     std::vector<float> vertices = {
-			0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-		   -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-			0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+		0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	   -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+	   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f
+	};
+
+	std::vector<unsigned int> indices =
+	{
+		0, 1, 2,
+		0, 2, 3
 	};
     // clang-format on
 
+    // vertex buffer obj
     GLuint vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    // vertex array obj
     GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
+    // grabs first 3 floats of the vector
     glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
+    // grabs after 3 floats of the vector
     glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -129,14 +149,13 @@ auto main() -> int
     glBindVertexArray(0);
 
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);  // set buffer bg color
+        glClear(GL_COLOR_BUFFER_BIT);          // clears and paint buffer
 
-        glUseProgram(shaderProgram);
-        glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glfwSwapBuffers(window);
+        glUseProgram(shaderProgram);                          // load/binds the pipeline
+        glBindVertexArray(vao);                               // tells gpu where to get data (VAO reads VBO)
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);  // draw elements
+        glfwSwapBuffers(window);                              // flips buffer to the screen
         glfwPollEvents();
     }
 

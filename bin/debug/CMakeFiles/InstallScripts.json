@@ -1,0 +1,11 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/sektant/work/projects/chad-engine-src/bin/debug/cmake_install.cmake",
+		"/home/sektant/work/projects/chad-engine-src/bin/debug/glfw_build/cmake_install.cmake",
+		"/home/sektant/work/projects/chad-engine-src/bin/debug/glfw_build/src/cmake_install.cmake",
+		"/home/sektant/work/projects/chad-engine-src/bin/debug/glfw_build/docs/cmake_install.cmake",
+		"/home/sektant/work/projects/chad-engine-src/bin/debug/glew_build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
