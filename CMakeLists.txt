@@ -29,12 +29,17 @@ set_property(TARGET glew_s PROPERTY FOLDER GLEW)
 set_property(TARGET glew   PROPERTY FOLDER GLEW)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(Rectangle_Example src/rectangleExample.cpp)
 
 target_link_libraries(${PROJECT_NAME}
 	glfw
 	glew_s
 )
 
+target_link_libraries(Rectangle_Example
+	glfw
+	glew_s
+)
 configure_file(
     "scripts/build_config.sh"   
     "${CMAKE_BINARY_DIR}/build_config.sh"  
