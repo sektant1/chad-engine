@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30)
 
-project(ChadEngine VERSION 1.0)
+project(snake-game-opengl VERSION 1.0)
 
 set(CMAKE_C_STANDARD 17) 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -11,14 +11,17 @@ set(BUILD_UTILS OFF CACHE BOOL "utilities" FORCE)
 # set(GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW lib only")
 # set(GLFW_INSTALL OFF CACHE BOOL "GLFW lib only")
 
-file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
+# file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
+set(SOURCE_FILES 
+	src/snakeGame.cpp
+)
 
 add_subdirectory(vendor/glfw 
 	"${CMAKE_CURRENT_BINARY_DIR}/glfw_build")
 add_subdirectory(vendor/glew/build/cmake
 	"${CMAKE_CURRENT_BINARY_DIR}/glew_build")
 
-include_directories(source)
+include_directories(src)
 include_directories(vendor/glfw/include) 
 include_directories(vendor/glew/include)
 

@@ -5,6 +5,41 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+struct Vec2
+{
+    float x = 0.0f;
+    float y = 0.0f;
+};
+
+Vec2 offset;
+
+void keyCallback(GLFWwindow *window, int key, int scanCode, int action, int mods)
+
+{
+    if (action == GLFW_PRESS) {
+        switch (key) {
+            case GLFW_KEY_UP:
+                offset.y += 0.01f;
+                std::cout << "GLFW_KEY_UP" << "\n";
+                break;
+            case GLFW_KEY_DOWN:
+                offset.y -= 0.01f;
+                std::cout << "GLFW_KEY_DOWN" << "\n";
+                break;
+            case GLFW_KEY_RIGHT:
+                offset.x += 0.01f;
+                std::cout << "GLFW_KEY_RIGHT" << "\n";
+                break;
+            case GLFW_KEY_LEFT:
+                offset.x -= 0.01f;
+                std::cout << "GLFW_KEY_LEFT" << "\n";
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 auto main() -> int
 {
     if (!glfwInit()) {
@@ -24,6 +59,8 @@ auto main() -> int
         return -1;
     }
 
+    glfwSetKeyCallback(window, keyCallback);
+
     // glfwSetWindowPos(window, 256, 256);
     glfwMakeContextCurrent(window);
 
@@ -39,12 +76,14 @@ auto main() -> int
 		layout (location = 0) in vec3 position;
 		layout (location = 1) in vec3 color;
 
+		uniform vec2 uOffset;
+
 		out vec3 vColor;
 
 		void main()
 		{	
 			vColor = color;
-			gl_Position = vec4(position.x, position.y, position.z, 1.0);
+			gl_Position = vec4(position.x + uOffset.x, position.y + uOffset.y, position.z, 1.0);
 		}
 	)";
 
@@ -68,10 +107,11 @@ auto main() -> int
 		out vec4 FragColor;
 		
 		in vec3 vColor;
+		uniform vec4 uColor;
 
 		void main()
 		{
-			FragColor = vec4(vColor, 1.0);
+			FragColor = vec4(vColor, 1.0) * uColor;
 		}
 	)";
 
@@ -148,11 +188,16 @@ auto main() -> int
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    GLint uColorLoc  = glGetUniformLocation(shaderProgram, "uColor");
+    GLint uOffsetLoc = glGetUniformLocation(shaderProgram, "uOffset");
+
     while (!glfwWindowShouldClose(window)) {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);  // set buffer bg color
         glClear(GL_COLOR_BUFFER_BIT);          // clears and paint buffer
 
-        glUseProgram(shaderProgram);                          // load/binds the pipeline
+        glUseProgram(shaderProgram);  // load/binds the pipeline
+        glUniform4f(uColorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
+        glUniform2f(uOffsetLoc, offset.x, offset.y);
         glBindVertexArray(vao);                               // tells gpu where to get data (VAO reads VBO)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);  // draw elements
         glfwSwapBuffers(window);                              // flips buffer to the screen
