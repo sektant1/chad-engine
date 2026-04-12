@@ -7,7 +7,11 @@ set(ENGINE_SOURCES
     src/renderer/shader.cpp
     src/renderer/mesh.cpp
     src/renderer/texture.cpp
-    src/renderer/material.cpp)
+    src/renderer/material.cpp
+    src/renderer/camera.cpp
+    src/renderer/model.cpp
+    src/renderer/renderer.cpp
+    src/physics/collision.cpp)
 
 add_library(chad_engine SHARED ${ENGINE_SOURCES})
 

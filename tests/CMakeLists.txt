@@ -16,7 +16,8 @@ set(CORE_TEST_SOURCES
     test_types.cpp
     test_math.cpp
     test_log.cpp
-    test_assert.cpp)
+    test_assert.cpp
+    test_camera.cpp)
 
 add_executable(chad_core_tests ${CORE_TEST_SOURCES})
 
@@ -43,7 +44,10 @@ set(GL_TEST_SOURCES
     test_material.cpp
     test_timer.cpp
     test_window.cpp
-    test_input.cpp)
+    test_input.cpp
+    test_model.cpp
+    test_renderer.cpp
+    test_collision.cpp)
 
 add_executable(chad_gl_tests ${GL_TEST_SOURCES})
 

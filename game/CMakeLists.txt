@@ -1,14 +1,18 @@
 # chad-game - Executable
 
-set(GAME_SOURCES src/main.cpp)
+set(GAME_SOURCES
+    src/main.cpp
+    src/dungeon/dungeon_map.cpp)
 
 add_executable(chad_game ${GAME_SOURCES})
 
 # Link engine - gets all public includes/libs transitively
-target_link_libraries(chad_game PRIVATE chad_engine)
+target_link_libraries(chad_game PRIVATE chad_engine glad)
 
 # Game's own headers
-target_include_directories(chad_game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(chad_game PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/vendor)
 
 # Output + rpath so game finds libchad_engine.so next to it
 set_target_properties(chad_game PROPERTIES
