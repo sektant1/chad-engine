@@ -11,7 +11,9 @@ set(ENGINE_SOURCES
     src/renderer/camera.cpp
     src/renderer/model.cpp
     src/renderer/renderer.cpp
-    src/physics/collision.cpp)
+    src/physics/collision.cpp
+    src/core/imgui_manager.cpp
+    src/core/imgui_theme.cpp)
 
 add_library(chad_engine SHARED ${ENGINE_SOURCES})
 

@@ -2,7 +2,9 @@
 
 set(GAME_SOURCES
     src/main.cpp
-    src/dungeon/dungeon_map.cpp)
+    src/dungeon/dungeon_map.cpp
+    src/dungeon/dungeon_props.cpp
+    src/dungeon/dungeon_world.cpp)
 
 add_executable(chad_game ${GAME_SOURCES})
 

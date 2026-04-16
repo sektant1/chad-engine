@@ -316,8 +316,21 @@ Vec3 CollisionWorld::collideWithWorld(CollisionPacket &packet,
     }
 
     // Slide plane: the normal points from the collision surface toward the
-    // sphere center.  This is the direction the sphere was "pushed" in.
-    Vec3 slide_origin = packet.intersection_point;
+    // sphere center.  The plane's ORIGIN must be `new_base` (the sphere
+    // center at the moment of contact), NOT the surface intersection point.
+    //
+    // Using intersection_point as origin is a subtle Fauerby trap: when the
+    // sphere is already very close to the surface (nearest_distance < margin,
+    // so new_base == pos), the projection
+    //     signed_d = dot(destination - intersection_point, slide_normal)
+    // picks up an extra term of ~1 (the sphere radius in eSpace) because
+    // the sphere center sits one radius away from the surface along the
+    // normal. That extra radius leaks into new_vel and produces a bogus
+    // full-radius kick straight into the surface, locking the player in
+    // place on every frame. Anchoring the plane at new_base makes
+    // `dot(destination - new_base, slide_normal) == dot(vel, slide_normal)`,
+    // which is the clean velocity projection Fauerby intends.
+    Vec3 slide_origin = new_base;
     Vec3 slide_normal = vec3SafeNormalize(new_base - packet.intersection_point);
 
     // Store world-space collision normal for ground detection.
@@ -713,10 +726,15 @@ void PlayerController::update(CollisionWorld &world, f32 dt, Vec3 input_move, bo
     // ---- Horizontal velocity from input ----
     Vec3 move_vel = input_move * move_speed;
 
-    // ---- Jump ----
-    if (jump && grounded) {
-        velocity.y = jump_force;
-        grounded   = false;
+    // ---- Jump (with coyote time) ----
+    // Allow jump if we've been off the ground for less than coyote_time.
+    // Prevents missed jumps when the player taps space a hair after
+    // walking off a ledge or during a frame where landing hadn't been
+    // detected yet.
+    if (jump && time_since_grounded <= coyote_time) {
+        velocity.y          = jump_force;
+        grounded            = false;
+        time_since_grounded = coyote_time + 1.0F;  // consume the window
     }
 
     // ---- Gravity ----
@@ -777,6 +795,14 @@ void PlayerController::update(CollisionWorld &world, f32 dt, Vec3 input_move, bo
         grounded = false;
     }
 
+    // ---- Coyote-time tracking ----
+    // Reset the timer whenever we're on ground. Otherwise accumulate.
+    if (grounded) {
+        time_since_grounded = 0.0F;
+    } else {
+        time_since_grounded += dt;
+    }
+
     // ---- Trigger check ----
     world.checkTriggers(position, radius);
 }
@@ -817,9 +843,10 @@ void PlayerController::tryStepUp(CollisionWorld &world, const Vec3 &move_vel, f3
 
         // Check if we landed on ground.
         if (down_packet.found_collision && down_packet.last_collision_normal.y > GROUND_SLOPE_LIMIT) {
-            grounded      = true;
-            ground_normal = down_packet.last_collision_normal;
-            velocity.y    = 0.0F;
+            grounded            = true;
+            ground_normal       = down_packet.last_collision_normal;
+            velocity.y          = 0.0F;
+            time_since_grounded = 0.0F;
         }
     }
 }

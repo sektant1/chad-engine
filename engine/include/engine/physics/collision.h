@@ -243,21 +243,23 @@ struct PlayerController
     f32 crouch_height = 0.5F;   // Y half-height (crouched)
 
     // ---- Movement tuning ----
-    f32 move_speed = 5.0F;
-    f32 jump_force = 7.0F;
-    f32 gravity    = -20.0F;
+    f32 move_speed  = 5.0F;
+    f32 jump_force  = 7.0F;
+    f32 gravity     = -20.0F;
     f32 step_height = 0.3F;     // max stair step-up snap
+    f32 coyote_time = 0.1F;     // seconds after leaving ground where jump still works
 
     // ---- Eye ----
     f32 eye_offset_stand  = 0.7F;   // from center of ellipsoid
     f32 eye_offset_crouch = 0.3F;
 
     // ---- State (read after Update) ----
-    bool grounded      = false;
-    bool in_water      = false;
-    bool crouching     = false;
-    f32  water_height  = 0.0F;
-    Vec3 ground_normal = {0.0F, 1.0F, 0.0F};
+    bool grounded            = false;
+    bool in_water            = false;
+    bool crouching           = false;
+    f32  water_height        = 0.0F;
+    Vec3 ground_normal       = {0.0F, 1.0F, 0.0F};
+    f32  time_since_grounded = 1.0F;  // seconds since last on-ground frame
 
     // ---- API ----
     void update(CollisionWorld &world, f32 dt, Vec3 input_move, bool jump, bool crouch);

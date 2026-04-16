@@ -192,7 +192,7 @@ static void connectRooms(Dungeon &dungeon, Rng &rng)
     for (usize i = 0; i + 1 < order.size(); ++i) {
         const Room &a = dungeon.rooms[order[i]];
         const Room &b = dungeon.rooms[order[i + 1]];
-        carveCorridor(dungeon, a.centerX(), a.centerZ(), b.centerX(), b.centerZ(), dungeon.config.corridor_width);
+        carveCorridor(dungeon, a.center_x(), a.center_z(), b.center_x(), b.center_z(), dungeon.config.corridor_width);
     }
 
     // Extra random connections for loops (makes exploration more interesting).
@@ -202,10 +202,10 @@ static void connectRooms(Dungeon &dungeon, Rng &rng)
         i32 ib = rng.range(0, static_cast<i32>(dungeon.rooms.size()));
         if (ia != ib) {
             carveCorridor(dungeon,
-                          dungeon.rooms[static_cast<usize>(ia)].centerX(),
-                          dungeon.rooms[static_cast<usize>(ia)].centerZ(),
-                          dungeon.rooms[static_cast<usize>(ib)].centerX(),
-                          dungeon.rooms[static_cast<usize>(ib)].centerZ(),
+                          dungeon.rooms[static_cast<usize>(ia)].center_x(),
+                          dungeon.rooms[static_cast<usize>(ia)].center_z(),
+                          dungeon.rooms[static_cast<usize>(ib)].center_x(),
+                          dungeon.rooms[static_cast<usize>(ib)].center_z(),
                           dungeon.config.corridor_width);
         }
     }
@@ -224,13 +224,13 @@ static void placeFeatures(Dungeon &dungeon, Rng &rng)
     // Spawn in first room.
     {
         const Room &r = dungeon.rooms[0];
-        dungeon.features.push_back({FeatureType::SPAWN, r.centerX(), r.centerZ()});
+        dungeon.features.push_back({FeatureType::SPAWN, r.center_x(), r.center_z()});
     }
 
     // Exit in last room.
     {
         const Room &r = dungeon.rooms.back();
-        dungeon.features.push_back({FeatureType::EXIT, r.centerX(), r.centerZ()});
+        dungeon.features.push_back({FeatureType::EXIT, r.center_x(), r.center_z()});
     }
 
     // Per-room features (skip first and last).
@@ -247,7 +247,7 @@ static void placeFeatures(Dungeon &dungeon, Rng &rng)
         }
 
         if (rng.percent() < cfg.trap_chance) {
-            dungeon.features.push_back({FeatureType::TRAP, r.centerX(), r.centerZ()});
+            dungeon.features.push_back({FeatureType::TRAP, r.center_x(), r.center_z()});
         }
         if (rng.percent() < cfg.loot_chance) {
             i32 lx = rng.range(r.x + 1, r.x + r.w - 1);
@@ -255,10 +255,10 @@ static void placeFeatures(Dungeon &dungeon, Rng &rng)
             dungeon.features.push_back({FeatureType::LOOT, lx, lz});
         }
         if (rng.percent() < cfg.enemy_chance) {
-            dungeon.features.push_back({FeatureType::ENEMY, r.centerX() + 1, r.centerZ()});
+            dungeon.features.push_back({FeatureType::ENEMY, r.center_x() + 1, r.center_z()});
         }
         if (rng.percent() < cfg.pillar_chance && r.w >= 6 && r.h >= 6) {
-            dungeon.features.push_back({FeatureType::PILLAR, r.centerX(), r.centerZ()});
+            dungeon.features.push_back({FeatureType::PILLAR, r.center_x(), r.center_z()});
         }
     }
 }
@@ -473,7 +473,7 @@ Vec3 dungeonGetSpawnPosition(const Dungeon &dungeon)
     // Fallback: center of first room.
     if (!dungeon.rooms.empty()) {
         const Room &r = dungeon.rooms[0];
-        return dungeon.gridToWorldCenter(r.centerX(), r.centerZ());
+        return dungeon.gridToWorldCenter(r.center_x(), r.center_z());
     }
     return {0, 0, 0};
 }

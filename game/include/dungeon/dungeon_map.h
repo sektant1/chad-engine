@@ -70,9 +70,9 @@ struct Room
     i32 x, z;  // top-left corner in grid coords
     i32 w, h;  // width (X), height (Z)
 
-    i32 centerX() const { return x + w / 2; }
+    i32 center_x() const { return x + w / 2; }
 
-    i32 centerZ() const { return z + h / 2; }
+    i32 center_z() const { return z + h / 2; }
 };
 
 // ---------------------------------------------------------------------------

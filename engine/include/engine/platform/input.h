@@ -30,6 +30,9 @@ enum class Key : u8
     Left,
     Right,
     GraveAccent,
+    F1,
+    F2,
+    F3,
     Count
 };
 

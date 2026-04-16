@@ -6,8 +6,8 @@
 #include <engine/core/log.h>
 #include <engine/core/math.h>
 // #include <engine/core/console.h>
-// #include <engine/core/debug_ui.h>
-// #include <engine/core/imgui_theme.h>
+#include <engine/core/imgui_manager.h>
+#include <engine/core/imgui_theme.h>
 
 // Platform
 #include <engine/platform/window.h>

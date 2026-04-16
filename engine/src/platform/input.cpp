@@ -17,8 +17,8 @@ static bool s_mouse_current[(u32)MouseButton::Count]  = {};
 static bool s_mouse_previous[(u32)MouseButton::Count] = {};
 
 static f64  s_mouse_x = 0.0, s_mouse_y = 0.0;
-static f64  s_mouse_last_x = 0.0, s_mouse_last_y = 0.0;
 static f64  s_mouse_dx = 0.0, s_mouse_dy = 0.0;
+static f64  s_mouse_accum_dx = 0.0, s_mouse_accum_dy = 0.0;
 static f64  s_scroll_dy   = 0.0;
 static bool s_first_mouse = true;
 
@@ -48,6 +48,9 @@ static int keyToGLFW(Key key) {
         case Key::Left:        return GLFW_KEY_LEFT;
         case Key::Right:       return GLFW_KEY_RIGHT;
         case Key::GraveAccent: return GLFW_KEY_GRAVE_ACCENT;
+        case Key::F1:          return GLFW_KEY_F1;
+        case Key::F2:          return GLFW_KEY_F2;
+        case Key::F3:          return GLFW_KEY_F3;
         default:               return GLFW_KEY_UNKNOWN;
     }
 }
@@ -68,6 +71,19 @@ static int mouseToGLFW(MouseButton button)
     }
 }
 
+static void cursorPosCallback(GLFWwindow *, double xpos, double ypos)
+{
+    if (s_first_mouse) {
+        s_mouse_x     = xpos;
+        s_mouse_y     = ypos;
+        s_first_mouse = false;
+    }
+    s_mouse_accum_dx += xpos - s_mouse_x;
+    s_mouse_accum_dy += ypos - s_mouse_y;
+    s_mouse_x = xpos;
+    s_mouse_y = ypos;
+}
+
 static void scrollCallback(GLFWwindow *, double, double yoffset)
 {
     s_scroll_dy = yoffset;
@@ -76,11 +92,10 @@ static void scrollCallback(GLFWwindow *, double, double yoffset)
 void inputInit(Window *win)
 {
     s_window = (GLFWwindow *)windowGetNativeHandle(win);
+    glfwSetCursorPosCallback(s_window, cursorPosCallback);
     glfwSetScrollCallback(s_window, scrollCallback);
     glfwGetCursorPos(s_window, &s_mouse_x, &s_mouse_y);
-    s_mouse_last_x = s_mouse_x;
-    s_mouse_last_y = s_mouse_y;
-    s_first_mouse  = true;
+    s_first_mouse = true;
 }
 
 void inputUpdate()
@@ -107,17 +122,11 @@ void inputUpdate()
         s_mouse_current[i] = (glfw_btn >= 0) && (glfwGetMouseButton(s_window, glfw_btn) == GLFW_PRESS);
     }
 
-    // 6. sample mouse position + derive delta
-    glfwGetCursorPos(s_window, &s_mouse_x, &s_mouse_y);
-    if (s_first_mouse) {
-        s_mouse_last_x = s_mouse_x;
-        s_mouse_last_y = s_mouse_y;
-        s_first_mouse  = false;
-    }
-    s_mouse_dx     = s_mouse_x - s_mouse_last_x;
-    s_mouse_dy     = s_mouse_y - s_mouse_last_y;
-    s_mouse_last_x = s_mouse_x;
-    s_mouse_last_y = s_mouse_y;
+    // 6. consume accumulated mouse delta from cursor callback
+    s_mouse_dx       = s_mouse_accum_dx;
+    s_mouse_dy       = s_mouse_accum_dy;
+    s_mouse_accum_dx = 0.0;
+    s_mouse_accum_dy = 0.0;
 }
 
 bool inputKeyDown(Key key)
@@ -174,7 +183,9 @@ void inputSetCursorLocked(bool locked)
 {
     glfwSetInputMode(s_window, GLFW_CURSOR, locked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     if (locked) {
-        s_first_mouse = true;
+        s_first_mouse    = true;
+        s_mouse_accum_dx = 0.0;
+        s_mouse_accum_dy = 0.0;
     }
 }
 
